@@ -1,0 +1,112 @@
+<div class="modal-header">
+	<h4 class="modal-title">Product details</h4>
+	<button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>
+
+<div>
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs"  role="tablist">
+	  <li class="nav-item">
+	    <a class="nav-link active"  data-toggle="tab" href="#overview" role="tab" >Overview</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link"  data-toggle="tab" href="#description" role="tab" >Description</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link"  data-toggle="tab" href="#images" role="tab" >Images</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link"  data-toggle="tab" href="#details" role="tab" >Details</a>
+	  </li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+	
+		<div class="tab-pane active p-3" id="overview" role="tabpanel" >
+		 	<div class="container-fluid">
+			  <div class="row m-2">
+			    <div class="col-2 m-auto">Product ID: </div>
+			    <div class="col-2">
+			      <input class="form-control" style="min-width: 45px;" th:value="${product.id}" readonly/>
+			    </div>
+			    <div class="col-8 m-auto">
+				  	<i th:class="${product.enabled} == true ? 'fas fa-check-circle icon-green' : 'far fa-circle icon-green'"/>
+				  	<span class="ml-1">Enabled</span>
+			    </div>
+			  </div>
+			  <div class="row m-2">
+			    <div class="col-2 m-auto">Product name: </div>
+			    <div class="col-10">
+			      <input class="form-control" th:value="${product.name}" readonly/>
+			    </div>
+			  </div>
+			  <div class="row m-2">
+			    <div class="col-2 m-auto">Category: </div>
+			    <div class="col-10">
+			      <input class="form-control" th:value="${product.category.name}" readonly/>
+			    </div>
+			  </div>
+			  <div class="row m-2">
+			    <div class="col-2 m-auto">Brand: </div>
+			    <div class="col-10">
+			      <input class="form-control" th:value="${product.brand.name}" readonly/>
+			    </div>
+			  </div>
+			  <div class="row m-2">
+			    <div class="col-2 m-auto">Price: </div>
+			    <div class="col-10">
+			      <input class="form-control" th:value="'$' + ${product.price}" readonly/>
+			    </div>
+			  </div>
+			  <div class="row m-2">
+			    <div class="col-2 m-auto">In stock: </div>
+			    <div class="col-10">
+			      <input class="form-control" th:value="${product.amount}" readonly/>
+			    </div>
+			  </div>
+			</div>
+		</div>
+		
+		
+		<div class="tab-pane p-3" id="description" role="tabpanel" >
+		 	<div class="container-fluid" th:with="descriptions=${#strings.arraySplit(product.description, '>>')}">
+			  	<ul th:each='des : ${descriptions}'>
+					<li>[[${des}]]</li>
+				</ul>
+			</div>
+		</div>
+		
+		
+		<div class="tab-pane p-3" id="images" role="tabpanel" >
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col" style="display: flex;">
+							<img th:src="@{${product.mainImagePath}}" style="width: 100%; margin: auto;">
+						</div>
+					<th:block th:each="image : ${product.images}">
+						<div class="col" style="display: flex;">
+							<img th:src="@{${image.extraImagePath}}" style="width: 100%; margin: auto;">
+						</div>
+					</th:block>
+				</div>
+			</div>
+		</div>
+	
+		<div class="tab-pane p-3" id="details" role="tabpanel">
+			<div class="container-fluid">
+				<th:block th:each="detail : ${product.details}">
+					<div class="row m-2">
+				    	<div class="col-2 m-auto">[[${detail.name}]]: </div>
+					    <div class="col-10">
+					      	<input class="form-control" th:value="${detail.value}" readonly/>
+					    </div>
+				  	</div>
+				</th:block>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+</div>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body >
+	<div th:fragment="content" th:remove="tag" class="d-flex justify-content-center">
+		<div class="row ">
+			<div class="col-3 border">
+				<div><label>Main image (Only one):</label></div>
+				<div class="text-center">
+					<img id="thumbnail" th:src="@{${product.mainImagePath}}" style="max-width:50%;"/>
+				</div>
+				<div class="m-2">
+					<input type="hidden" th:field="*{mainImage}"/>
+					<input type="file" id="fileImage" name="fileMainImage"
+					accept="image/png, image/jpeg" th:required="${product.mainImage==null}"/>
+				</div>
+			</div>
+			<div class="col-9 border">
+				<div class="row" id="divExtraImages">
+					<th:block th:if="${product.images.size() > 0}" th:with="imagesCount = ${product.images.size()}">
+						<th:block  th:each="image, status : ${product.images}">
+							<div class="col-4 border" th:id="'divExtraImage' + ${status.index}">
+								<div th:id="'extraImageHeader' + ${status.index}">
+									<label>Extra image:</label>
+									<a class="btn fas fa-times-circle float-right icon-gray" th:href="'javascript:removeExtraImage('+${status.index}+')'"
+										title="Remove this image"></a>								
+								</div>
+								<div class="text-center">
+									<img th:id="'extraThumbnail' + ${status.index}" th:src="@{${image.extraImagePath}}" style="max-width:50%;"/>
+								</div>
+								<div class="m-2" >
+									<input type="file" name="fileExtraImage" th:value="${image.name}"
+									accept="image/png, image/jpeg"/>
+								</div>
+								
+								<input type="hidden" name="imageIDs" th:id="'imageId'+${status.index}" th:value="${image.id}"/>
+								<input type="hidden" name="imageNames" th:id="'imageName'+${status.index}" th:value="${image.name}"/>
+							</div>
+							
+						</th:block>
+						<div class="col-4 border" th:id="'divExtraImage' + ${imagesCount}">
+							<div th:id="'extraImageHeader' + ${imagesCount}">
+								<label>Extra image:</label>							
+							</div>
+							<div class="text-center">
+								<img th:id="'extraThumbnail' + ${imagesCount}" th:src="@{/images/image-thumbnail.png}" style="max-width:50%;"/>
+							</div>
+							<div class="m-2">
+								<input type="file" name="fileExtraImage" 
+								accept="image/png, image/jpeg" />
+							</div>
+						</div>
+						
+						
+					</th:block>
+					
+					<th:block th:if="${product.images.size() == 0}">
+						<div class="col-4 border" id="divExtraImage0">
+							<div id="extraImageHeader0">
+								<label>Extra image:</label>
+							</div>
+							<div class="text-center">
+								<img id="extraThumbnail0" th:src="@{/images/image-thumbnail.png}" style="max-width:50%;"/>
+							</div>
+							<div class="m-2">
+								<input type="file" name="fileExtraImage" 
+								accept="image/png, image/jpeg" />
+							</div>
+						</div>
+					</th:block>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

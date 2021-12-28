@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments :: page_head('Reset password', null)">
+</head>
+<body>
+	<div class="container-fluid">
+
+		<div th:replace="navigation :: header_menu"></div>
+
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+		<div th:if="${error != null}"
+			class="alert alert-danger text-center">[[${error}]]</div>
+			
+		<div class="text-center">
+			<h4>Reset link will be send to this email:</h4>
+		</div>
+
+		<form th:action="@{/request_reset_password}" method="post"
+			style="max-width: 700px; margin: 0 auto;">
+			
+			
+			
+			<div class="border border-secondary rounded p-3">
+				<div class="form-group row">
+					<label class="col-sm-1 col-form-label">Email:</label>
+					<div class="col-sm-11">
+						<input type="email" class="form-control" name="email" required minlength="8" maxlength="128" />
+					</div>
+				</div>
+				
+				<div class="text-center">
+					<input type="submit" value="Send verify link" class="btn btn-primary m-3">
+					<input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel">
+				</div>
+			</div>
+		</form>
+	
+	
+		<div th:replace="fragments :: footer"></div>
+	</div>
+	
+	<script type="text/javascript" >
+		moduleURL="/Shopme/login";
+	</script>
+	<script type="text/javascript" th:src="@{/js/common_form.js}">
+	</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Login', null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:if="${error != null}"
+			class="alert alert-danger text-center">[[${error}]]</div>
+			<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+		<div class="row d-flex justify-content-center mt-5 ">
+			<form th:action="@{/login}" method="post">
+				<div  th:if="${param.error}" class="text-danger text-center d-flex justify-content-center">
+					[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]! 
+				</div>
+				<div class="border border-secondary rounded p-3 " style="min-width:450px;">
+					<div class="row d-flex justify-content-center mb-3">
+						<img th:src="@{/images/ShopmeAdminSmall.png}" />
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-3 col-form-label">Email:</label>
+						<div class="col-sm-9">
+							<input type="email" name="email" class="form-control" required
+								placeholder="Your email" />
+						</div>
+					</div>
+					<div class="form-group row mb-3">
+						<label class="col-sm-3 col-form-label">Password:</label>
+						<div class="col-sm-9">
+							<input type="password" name="password" class="form-control" required
+								placeholder="Your password" />
+						</div>
+					</div>
+					<div class="d-flex justify-content-between align-items-end mt-3">
+						<span >
+							<input type="checkbox" id="rememberMe" name="remember-me" />
+							<label for="rememberMe">Remember me for the next time</label>
+						</span>
+						<input type="submit" value="Login" class="btn btn-primary" style="width:20%;"/>
+					</div>
+					
+					<div class="mt-5">
+						<div class="text-center m-2 d-inline">
+							<a th:href="@{/oauth2/authorization/facebook}"
+							class="btn text-white" style="background-color:dodgerblue;">
+								<i class="fab fa-facebook mr-3"></i>
+								Continue with Facebook
+							</a>
+						</div>
+						<div class="text-center m-2 mt-3 d-inline">
+							<a th:href="@{/oauth2/authorization/google}" 
+								class="btn text-white" style="background-color:indianred;">
+								<i class="fab fa-google mr-3"></i>
+								Continue with Google
+							</a>
+						</div>
+					</div>
+					
+				</div>
+				<div class="text-center mt-2">
+					Don't have an account? <a th:href="@{/register}">Sign-up</a>
+				</div>
+				<div class="text-center mt-2">
+					or forgot password? <a th:href="@{/forgot_password}">Reset password</a>
+				</div>
+				
+			</form>
+		</div>
+	</div>
+</body>
+</html>

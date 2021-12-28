@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Products - Shopme Admin', null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		
+		<div>
+			<h1>Manage products</h1>
+			<a sec:authorize="hasAnyAuthority('Admin', 'Editor')" th:href="@{/products/new}"
+				class="fas fa-laptop-medical fa-2x icon-gray mb-3"></a>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+
+		<div>
+			<form th:action="@{/products/page/1}" class="form-inline mb-3 justify-content-center d-flex flex-wrap" id="searchForm">
+			
+				<div class="d-inline-block mr-5" >
+					<select class="form-control" name="categoryId" id="dropDownCategories">
+						<option value="0">-- All categories --</option>
+						<th:block th:each="cate : ${listCategories}">
+							<option th:value="${cate.id}" th:selected="${categoryId == cate.id}">[[${cate.name}]]</option>
+						</th:block>
+					</select>
+				</div>	
+				
+				<span class="full-details">Filter:</span> 
+				<input  class="form-control ml-4" type="search" name="keyword" th:value="${keyword}"/>
+				<button id="searchButton" class="btn btn-primary ml-3" type="submit">
+					<i class="fas fa-search"></i>
+				</button>  
+				<button id="clearButton" class="btn btn-secondary ml-3" type="button"  onclick="clearFilter()">
+					<i class="fas fa-eraser"></i>
+				</button> 
+			</form>
+		</div>
+		
+		
+		<div class="full-details ">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr class="">
+						<th style="min-width:150px;">Action</th>
+						<th>ID</th>
+						<th style="width:150px;">Main Image</th>
+						<th>Name</th>
+						<th>Brand</th>
+						<th>Category</th>
+						<th>In stock</th>
+						<th>Enabled</th>
+					</tr>
+				</thead>
+				<tbody class="">
+					<tr th:each="product : ${listProducts}">
+						<td>
+							<a class="link-detail" th:href="@{'/products/details/' + ${product.id}}">
+								<i class="fas fa-file-alt"></i>
+							</a> |
+							<a th:href="@{'/products/edit/' + ${product.id}}">
+								<i class="fas fa-edit  icon-green"></i>
+							</a><span sec:authorize="hasAnyAuthority('Admin', 'Editor')">|</span>  
+							<a sec:authorize="hasAnyAuthority('Admin', 'Editor')" th:href="@{'/products/delete/' + ${product.id}}" th:itemId="${product.id}" class="link-delete">
+								<i class="fas fa-trash  icon-red "></i>
+							</a> 
+							
+						</td>
+						<td>[[${product.id}]]</td>
+						<td > 
+							 <img th:if="${product.mainImage != null}" th:src="@{${product.mainImagePath}}" class="img-fluid" />
+						</td>
+						<td>
+							<a class="link-detail" th:href="@{'/products/details/' + ${product.id}}">
+								[[${product.name}]]
+							</a> 
+						</td>
+						<td>[[${product.brand.name}]] </td>
+						<td>[[${product.category.name}]] </td>
+						<td>[[${product.amount}]] </td>
+						<td><a th:if="${product.enabled == false}" href=""><i
+								class="fas fa-check-circle  icon-gray"></i></a> <a
+							th:if="${product.enabled == true}" href=""><i
+								class="fas fa-check-circle  icon-green"></i></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		 
+ 
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing items [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total items</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No item found</h2>
+		</div>
+
+		<nav th:if="${totalElements > 0}" 
+			th:replace="fragments :: pagination('/products/page/1?keyword=' + ${keyword==null? '' : keyword},
+																				'/products/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/products/page/',
+																				'/products/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/products/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+																				${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+			
+		</nav>
+	
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success"  id="deleteItem" href="">Delete this item </a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="modal fade" id="modalProductDetails">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">			
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript">	
+		
+		$(document).ready(
+			function() {
+				$(".link-delete").on("click", function(e) {
+					e.preventDefault();
+					link = $(this);
+					itemId = link.attr("itemId");
+					$("#deleteItem")
+							.attr("href", link.attr("href"));
+					$("#modalBody").text(
+							"Are you sure to delete this item (ID="
+									+ itemId + ")");
+					$("#modalDialog").modal();
+				});
+				
+				handleLinkProductDetail();
+				
+				$("#dropDownCategories").on("change", function(){
+					$("#searchForm").submit();
+				})
+				
+			}
+		);
+		
+		function handleLinkProductDetail(){
+			$(".link-detail").on("click", function(e){
+				e.preventDefault();
+				url = $(this).attr('href');
+				$("#modalProductDetails").modal("show").find(".modal-content").load(url);
+			})
+		}
+		
+		function clearFilter(){
+			window.location = "[[@{/products}]]"
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="content">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs"  role="templateTab">
+			  <li class="nav-item">
+			    <a class="nav-link active"  data-toggle="tab" href="#verification" role="tab" >Customer verification</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link"  data-toggle="tab" href="#confirmation" role="tab" >Order confirmation</a>
+			  </li>
+			</ul>
+	
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane active p-3" id="verification" role="tabpanel" >
+				 	<div th:replace="settings/setting_mail-templates/customer_verification :: content"></div>
+				</div>
+				<div class="tab-pane" id="confirmation" role="tabpanel" >
+				 	<div th:replace="settings/setting_mail-templates/order_confirmation :: content"></div>
+				</div>
+
+			</div>
+		</div>
+</body>
+</html>

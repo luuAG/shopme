@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body >
+	<div th:fragment="content" th:remove="tag" class="d-flex justify-content-center">
+		<div class="container">
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label">Name:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" th:field="*{name}" required
+						maxlength="256" />
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label">Alias:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" th:field="*{alias}"
+						maxlength="256" placeholder="Default: product name with spaces replaced by dashes(-)"/>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label">Brand:</label>
+				<div class="col-sm-5">
+					<select class="form-control " th:field="*{brand}" required>
+						<th:block th:each="brand : ${listBrands}">
+							<option th:value="${brand.id}" > [[${brand.name}]]</option>
+						</th:block>
+					</select>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label">Category:</label>
+				<div class="col-sm-5">
+					<th:block th:if="${product.category == null}">
+						<select class="form-control " th:field="*{category}" required>			
+						</select>
+					</th:block>
+					<th:block th:if="${product.category != null}" >
+						<select class="form-control " th:field="*{category}" required>	
+							<th:block th:each="cate : ${product.brand.categories}">
+								<option th:value="${cate.id}">[[${cate.name}]]</option>
+							</th:block>	
+						</select>
+					</th:block>
+					
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label d-inline">Enabled:</label>
+				<div class="col-sm-5">
+					<input class="mt-3 ml-3" type="checkbox" th:field="*{enabled}" />
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label d-inline">In stock:</label>
+				<div class="col-sm-5">
+					<input class="mt-3 ml-3 " type="checkbox" th:field="*{inStock}" />
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label">Amount: </label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" th:field="*{amount}" required
+						maxlength="256" />
+				</div>
+			</div>
+			<div class="form-group row justify-content-center">
+				<label class="col-sm-1 col-form-label">Price ($):</label>
+				<div class="col-sm-5">
+					<input type="number" step="any" min="0" class="form-control" th:field="*{price}" required/> 
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>

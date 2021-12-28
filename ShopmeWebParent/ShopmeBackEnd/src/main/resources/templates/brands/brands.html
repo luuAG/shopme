@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Brands - Shopme Admin', null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		<div>
+			<h1>Manage brands</h1>
+			<a th:href="@{/brands/new}"
+				class="fas fa-copyright fa-2x icon-gray mb-3">+</a>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+		<div th:replace="fragments :: filter('/brands/page/1')"></div>
+		
+		<div class="full-details ">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr class="">
+						<th style="max-width:70px;">Edit | Delete</th>
+						<th>ID</th>
+						<th style="width:150px;">Logo</th>
+						<th>Name</th>
+						<th>Categories</th>
+					</tr>
+				</thead>
+				<tbody class="">
+					<tr th:each="brand : ${listBrands}">
+						<td>
+							<a th:href="@{'/brands/edit/' + ${brand.id}}">
+								<i class="fas fa-edit  icon-green"></i>
+							</a> | 
+							<a th:href="@{'/brands/delete/' + ${brand.id}}" th:itemId="${brand.id}" class="link-delete">
+								<i class="fas fa-trash  icon-red "></i>
+							</a>
+						</td>
+						<td>[[${brand.id}]]</td>
+						<td > 
+							 <img th:if="${brand.logoPath != null}" th:src="@{${brand.logoPath}}" class="img-fluid" />
+						</td>
+						<td>[[${brand.name}]] </td>
+						<td>
+							<th:block th:each="cate : ${brand.categories}">
+								<span class="text-white bg-secondary m-1"><span class="p-1">[[${cate.name}]]</span></span>
+							</th:block>
+						</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		 
+ 
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing top-level items [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total items</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No item found</h2>
+		</div>
+
+		<nav th:if="${totalElements > 0}" th:replace="fragments :: pagination('/brands/page/1?keyword=' + ${keyword==null? '' : keyword},
+																				'/brands/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/brands/page/',
+																				'/brands/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/brands/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+																				${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+			
+		</nav>
+	
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success"  id="deleteItem" href="">Delete this item </a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript">	
+		
+		$(document).ready(
+			function() {
+				$(".link-delete").on(
+						"click",
+						function(e) {
+							e.preventDefault();
+							link = $(this);
+							itemId = link.attr("itemId");
+							$("#deleteItem")
+									.attr("href", link.attr("href"));
+							$("#modalBody").text(
+									"Are you sure to delete this item (ID="
+											+ itemId + ")");
+							$("#modalDialog").modal();
+						})
+				
+			}
+		);
+		function clearFilter(){
+			window.location = "[[@{/brands}]]"
+		}
+	</script>
+</body>
+</html>

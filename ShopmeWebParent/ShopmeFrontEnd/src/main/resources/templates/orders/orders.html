@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Orders', null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		
+		
+		
+		<h1 class="text-center">Your orders</h1>
+		
+		<div>
+			<div style="margin: 0 auto;width:190px;">
+				<form th:action="@{/orders}" method="get" id="formFilter">
+					<select class="form-control" style="max-width:190px;" name="filter" onchange="submitForm()">
+						<option value="delivered" th:selected="${filter=='delivered'}">Delivered orders</option>
+						<option value="undelivered" th:selected="${filter=='undelivered'}">Undelivered orders</option>
+					</select>
+				</form>
+			</div>
+		</div>
+		
+		<div th:if="${orders == null || orders.size() == 0}">
+			<h2 class="text-info text-center">You have no order</h2>
+		</div>
+		
+		<div>
+			<div th:if="${orders != null && orders.size() > 0}" style="max-width:60%;margin:0 auto;">
+				<th:block th:each="order, status : ${orders}">
+					<div class="card mt-3">
+						<div class="card-header">
+							<h2>Order #[[${status.index + 1}]]</h2>
+						</div>
+						<div class="card-body">
+							<div class="border m-2">
+								<div class="m-3">
+									<div>
+										<b>Recipient:</b> [[${order.recipient}]]
+									</div>
+									<div>
+										<b>Address:</b> [[${order.address}]]
+									</div>
+									<div>
+										<b>Expected delivery date:</b> [[${order.formatedDeliverTime}]]
+										<p class="text-danger">yyyy-MM-dd</p>
+									</div>
+									<div>
+										<b>Status:</b> [[${order.status}]]
+									</div>
+								</div>
+							</div>
+							<div>
+								<th:block th:each="detail : ${order.orderDetails}" th:with="product = ${detail.product}">
+									<div class="row border">
+								 		<div class="col-1">
+								 			<div class="d-flex align-items-center justify-content-center" style="height:100%;">
+								 				<h3>[[${detail.quantity}]] X</h3>
+								 			</div>
+								 		</div> 
+								 		<div class="col-3">
+								 			<img th:src="@{${detail.product.mainImagePath}}" class="img-fluid m-2"/>
+								 		</div>
+								 		<div class="col-8">
+								 			<p>[[${product.name}]]</p>
+								 			<p style="color:darkred;">$[[${product.price}]]</p>
+								 			<p><b>Subtotal: </b><span style="color:darkred;">$[[${detail.subTotalPrice}]]</span></p>
+								 		</div>
+								 	</div>			
+								</th:block>
+							</div>
+							<div class="text-center">
+							 	<h3><b>Total price: </b><span style="color:darkred;"> $[[${order.totalPrice}]]</span> </h3>
+							 	<p>(+ $[[${order.shippingCost}]] shipping cost)</p>
+							 </div>
+						</div>
+					</div>
+				</th:block>
+			</div>
+		</div>
+		
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	<script type="text/javascript">
+		function submitForm(){
+			$("#formFilter").submit();
+		}
+	</script>
+</body>
+</html>

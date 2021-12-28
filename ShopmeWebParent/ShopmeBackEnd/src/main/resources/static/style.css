@@ -1,0 +1,33 @@
+.icon-white {color:white;}
+.icon-black {color:black;}
+.icon-green {color:green;}
+.icon-red {color:red;}
+.icon-blue {color:dodgerblue;}
+.icon-gray {color:gray;}
+.fa-edit {margin-right:10px; margin-left:10px;}
+.fa-trash {margin-left:10px;}
+.fa-save {margin-left:10px;}
+.fa-file-alt {margin-right:10px;}
+
+@media screen and (max-width: 740px) {
+	/* small */
+	
+	.full-details {display: none;}
+	.less-details {display: block;}
+	#searchButton {margin-top:10px;}
+	#clearButton {margin-top:10px;}
+}
+
+@media screen and (min-width: 740px) and (max-width:1024px) {
+	/* medium */
+	
+	.full-details {display: block;}
+	.less-details {display: none;}
+	.hideable-column {display:none;}
+}
+
+@media screen and (min-width: 1025px) {
+	/* large */
+	div.less-details {display: none;}
+	
+}

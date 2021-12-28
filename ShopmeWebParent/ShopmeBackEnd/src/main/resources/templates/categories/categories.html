@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Categories - Shopme Admin', null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		<div>
+			<h1>Manage categories</h1>
+			<a th:href="@{/categories/new}"
+				class="fas fa-folder-plus fa-2x icon-gray mb-3"></a>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+		<div th:replace="fragments :: filter('/categories/page/1')"></div>
+		
+		<div class="full-details ">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr class="">
+						<th style="max-width:50px;">Edit | Delete</th>
+						<th>ID</th>
+						<th style="width:150px;">Image</th>
+						<th>Name</th>
+						<th>Alias</th>
+						<th>Enabled</th>
+					</tr>
+				</thead>
+				<tbody class="">
+					<tr th:each="category : ${listCategories}">
+						<td style="max-width:50px;">
+							<a th:href="@{'/categories/edit/' + ${category.id}}">
+								<i class="fas fa-edit  icon-green"></i>
+							</a> | 
+							<a th:if="${!category.hasChildren}" th:href="@{'/categories/delete/' + ${category.id}}" th:itemId="${category.id}" class="link-delete">
+								<i class="fas fa-trash  icon-red "></i>
+							</a>
+						</td>
+						<td>[[${category.id}]]</td>
+						<td > 
+							<img th:src="@{${category.imagePath}}" class="img-fluid" />
+						</td>
+						<td>[[${category.name}]] </td>
+						<td>[[${category.alias}]]</td>
+						<td>
+							<a >
+								<i th:if="${category.enabled == false}" class="fas fa-check-circle  icon-gray"></i>
+								<i th:if="${category.enabled == true}" class="fas fa-check-circle  icon-green"></i>
+							</a> 
+						</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		
+
+ 
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing top-level items [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total items</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No item found</h2>
+		</div>
+		<!-- 
+		<nav th:if="${totalElements > 0}">
+			<ul class="pagination justify-content-center flex-wrap">
+				<li class="page-item"><a class="page-link"
+					th:href="@{'/categories/page/1?keyword=' + ${keyword==null? '' : keyword}}">First</a></li>	
+				<li th:class="${currentPage == 1 ? 'page-item disabled': 'page-item'}">
+					<a class="page-link" th:href="@{'/categories/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword}}">Previous</a>
+				</li>
+				<li th:class="${currentPage == pageNum ? 'page-item active': 'page-item'}"
+					th:each="pageNum : ${#numbers.sequence(1, totalPages)}">
+					<a class="page-link" th:href="@{'/categories/page/'+${pageNum} + '?keyword=' + ${keyword==null? '' : keyword}}">[[${pageNum}]]</a>
+				</li>
+
+				<li th:class="${currentPage == totalPages ? 'page-item disabled': 'page-item'}">
+					<a class="page-link" th:href="@{'/categories/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword}}">Next</a>
+				</li>
+				<li class="page-item"><a class="page-link"
+					th:href="@{'/categories/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword}}">Last</a></li>
+
+			</ul>
+		</nav> 
+		-->
+
+		<nav th:if="${totalElements > 0}" th:replace="fragments :: pagination('/categories/page/1?keyword=' + ${keyword==null? '' : keyword},
+																				'/categories/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/categories/page/',
+																				'/categories/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/categories/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+																				${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+			
+		</nav>
+		
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success"  id="deleteItem" href="">Delete this item </a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript">	
+		
+		$(document).ready(
+			function() {
+				$(".link-delete").on(
+						"click",
+						function(e) {
+							e.preventDefault();
+							link = $(this);
+							itemId = link.attr("itemId");
+							$("#deleteItem")
+									.attr("href", link.attr("href"));
+							$("#modalBody").text(
+									"Are you sure to delete this item (ID="
+											+ itemId + ")");
+							$("#modalDialog").modal();
+						})
+				
+			}
+		);
+		function clearFilter(){
+			window.location = "[[@{/categories}]]"
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body >
+	<div th:fragment="content" th:remove="tag" class="d-flex justify-content-center">
+	
+		<div class="container">
+			<div id="divContainer">
+				<th:block th:each="shipping, status : ${shippings}">
+					<form class="form-group row border align-items-center mt-2" 
+						th:action="@{'/settings/save_shipping/' + ${shipping.location}}"
+						method="post" th:id="'form' + ${status.index}"
+						onsubmit="return getActionUrl(event, this);">
+						<label class="col-sm-1 col-form-label">Location:</label>
+						<div class="col-sm-2">
+							<input th:id="'location'+${status.index}" type="text" class="form-control" name="location" th:value="${shipping.location}" readonly/>
+						</div>
+						<label class="col-sm-1 col-form-label">Shipping cost:</label>
+						<div class="col-sm-1">
+							<input th:id="'cost'+${status.index}" type="number" step="any" min="0" class="form-control" name="cost" th:value="${shipping.shippingCost}" required />
+						</div>
+						<label class="col-sm-2 col-form-label">Expected delivery time:</label>
+						<div class="col-sm-1">
+							<input th:id="'time'+${status.index}" type="number" step="1" min="0" class="form-control" name="time" th:value="${shipping.expectedDeliveryTime}" required />
+						</div>
+						<label class="col-sm-1 col-form-label">days</label>
+						<div class="row col-sm-3 align-items-center" >
+							<input type="submit" class="form-control button btn-primary" value="Save" style="max-width:80px;"/>
+							<a th:href="@{'/settings/delete_shipping/' + ${shipping.location}}" >
+								<input type="button" class="form-control button btn-danger ml-3" value="Delete" style="max-width:80px;"/>
+							</a>						
+						</div>
+					</form>
+				</th:block>
+			</div>
+			
+			
+			<div class="row justify-content-center">
+				<button id="addLocation" class="form-control button btn-primary mb-5 mt-3" style="max-width:200px;">Add shipping location</button>
+			</div>
+			
+		</div>
+		
+		
+	</div>
+	
+</body>
+</html>

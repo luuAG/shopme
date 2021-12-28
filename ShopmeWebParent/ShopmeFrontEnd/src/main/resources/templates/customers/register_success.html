@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${pageTitle}, null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		
+		
+		<div class="text-center">
+			<h1>Registration succeeded</h1>
+			<p>Check your G-mail to verify your account. 
+				<a target="_blank" href="https://mail.google.com/">Click here to go to G-mail</a>
+			</p>
+			<h3>After your verification, comeback here to log-in
+				<a th:href="@{/login}"></a>
+			</h3>
+		</div>
+		
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	
+</body>
+</html>

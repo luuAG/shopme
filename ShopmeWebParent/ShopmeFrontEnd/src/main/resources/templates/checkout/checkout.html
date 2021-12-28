@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Your cart', null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		
+		
+		<h2 class="ml-3 text-center">Checkout</h2>
+
+		<div class="row">
+			<div class="col-4">
+				<div class="card">
+					<div class="card-header">
+						<h5>Checkout information</h5>
+					</div>
+					<div class="card-body">
+						<div>
+							<b>Recipient:</b> [[${checkoutInfo.fullName}]]
+						</div>
+						<div>
+							<b>Address:</b> [[${checkoutInfo.address}]]
+						</div>
+						<div>
+							<b>Expected delivery date:</b> [[${checkoutInfo.formatedDeliverTime}]]
+							<p class="text-danger">yyyy-MM-dd</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="text-center mt-3">
+					<h3 class="text-info">Check your email for confirmation</h3>
+					<a href="https://mail.google.com" target="_blank">Open your g-mail</a>
+				</div>
+			</div>
+			
+			<div class="col-8">
+				<div class="card">
+					<div class="card-header">
+						<h5>Ordered products</h5>
+					</div>
+					<div class="card-body">
+						 <th:block th:each="item : ${cartItems}">
+						 	<div class="row border">
+						 		<div class="col-1">
+						 			<div class="d-flex align-items-center justify-content-center" style="height:100%;">
+						 				<h3>[[${item.quantity}]] X</h3>
+						 			</div>
+						 		</div> 
+						 		<div class="col-3">
+						 			<img th:src="@{${item.product.mainImagePath}}" class="img-fluid m-2"/>
+						 		</div>
+						 		<div class="col-8">
+						 			<p>[[${item.product.name}]]</p>
+						 			<p style="color:darkred;">$[[${item.product.price}]]</p>
+						 			<p><b>Subtotal: </b><span style="color:darkred;">$[[${item.totalPrice}]]</span></p>
+						 		</div>
+						 	</div>						 	
+						 </th:block>
+						 <div class="text-center">
+						 	<h3><b>Total price: </b><span style="color:darkred;"> $[[${checkoutInfo.totalPrice}]]</span> </h3>
+						 	<p>(+ $[[${checkoutInfo.shippingCost}]] shipping cost)</p>
+						 </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+
+	<script type="text/javascript" >
+		contextPath = "[[@{/}]]";
+		$(document).ready(function(){
+			$(window).on("unload", function(e){
+				e.preventDefault();
+				location.replace(contextPath);
+			})
+		})
+	</script>
+</body>
+</html>

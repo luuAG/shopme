@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Home', null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		
+		
+		
+		<div class="text-center"><h2>Categories</h2></div>
+		<div class="row ml-5">
+			<div class="col-1"  th:each="cate : ${listNoChildCategories}">
+				<a class="col" th:href="@{'/c/'+${cate.alias}}" >
+					<img class="row" th:src="@{${cate.imagePath}}" style="width:50%;border-radius:50%"/>
+					<span class="row" style="width:70%;">[[${cate.name}]]</span>
+				</a>
+			</div>
+		</div>
+		
+		<div class="text-center"><h2>All products</h2></div>
+		<div class="row">
+			<th:block th:each="product : ${allProducts}">
+				<div class="col-2 mb-5 mt-5 " >
+					<div class="col text-center border" style="height:325px;">
+						<a th:href="@{'/p/'+${product.alias}}">
+							<img th:src="@{${product.mainImagePath}}" style="max-width:80%;max-height:50%;" />
+						</a>
+						<div style="max-width:95%;margin:auto;text-align:center;">
+							<a th:href="@{'/p/'+${product.alias}}">[[${product.name}]]</a>
+						</div>
+						<div style="color:darkred;text-align:center;">$[[${product.price}]]</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+		
+		
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	
+</body>
+</html>

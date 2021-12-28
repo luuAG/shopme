@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body >
+	<div th:fragment="content" th:remove="tag" class="d-flex justify-content-center">
+		<form th:action="@{/settings/save_mailserver}" method="post">
+		<div class="container border">
+			<div class="form-group row justify-content-center align-items-center">
+				<label class="col-sm-2 col-form-label">SMTP Server host name:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" name="MAIL_HOST" th:value="${MAIL_HOST}" required/>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center">
+				<label class="col-sm-2 col-form-label">Port number:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" name="MAIL_PORT" th:value="${MAIL_PORT}" required/>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center">
+				<label class="col-sm-2 col-form-label">User name:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" name="MAIL_USERNAME" th:value="${MAIL_USERNAME}" required/>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center">
+				<label class="col-sm-2 col-form-label">Password:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" name="MAIL_PASSWORD" th:value="${MAIL_PASSWORD}" required/>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center border">
+				<label class="col-sm-2 col-form-label">Server Authentication required:</label>
+				<div class="col-sm-5">
+					<input type="checkbox" class="" name="SMTP_AUTH" th:checked="${SMTP_AUTH}" />
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center border">
+				<label class="col-sm-2 col-form-label">Server Secured Connection required:</label>
+				<div class="col-sm-5">
+					<input type="checkbox" class="" name="SMTP_SECURED" th:checked="${SMTP_SECURED}" />
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center">
+				<label class="col-sm-2 col-form-label">Mail sender:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" name="MAIL_FROM" th:value="${MAIL_FROM}" required/>
+				</div>
+			</div>
+			<div class="form-group row justify-content-center align-items-center">
+				<label class="col-sm-2 col-form-label">Sender name:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" name="MAIL_SENDER_NAME" th:value="${MAIL_SENDER_NAME}" required/>
+				</div>
+			</div>
+		</div>
+		
+		<div class="text-center" >
+			<input type="submit" value="Save" class="btn btn-primary m-3" style="min-width:10%">
+			<input type="button" value="Cancel" class="btn btn-secondary button-cancel"  style="min-width:10%">
+		</div>
+		</form>
+		
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('User - Shopme Admin', null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		<div>
+			<h1>Manage users</h1>
+			<a th:href="@{/users/new}"
+				class="fas fa-user-plus fa-2x icon-gray mb-3"></a>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+		<div th:replace="fragments :: filter('/users/page/1')"></div>
+		
+		<div class="full-details ">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr class="">
+						<th>Edit | Delete</th>
+						<th class="hideable-column">ID</th>
+						<th>Photo</th>
+						<th class="hideable-column">Email</th>
+						<th>First name</th>
+						<th>Last name</th>
+						<th style="max-width:200px;">Role</th>
+						<th>Enabled</th>
+					</tr>
+				</thead>
+				<tbody class="">
+					<tr th:each="user : ${listUser}">
+						<td ><a th:href="@{'/users/edit/'+${user.id}}"><i
+								class="fas fa-edit  icon-green"></i></a> | <a
+							th:href="@{'/users/delete/'+${user.id}}" class="link-delete"
+							th:userId="${user.id}"><i class="fas fa-trash  icon-red "></i></a>
+						</td>
+						<td class="hideable-column">[[${user.id}]]</td>
+						<td><i th:if="${user.photo == null}"
+							class="fas fa-portrait fa-3x icon-gray"></i> <img
+							th:if="${user.photo != null}" th:src="@{${user.photoPath}}"
+							style="max-width: 100px;" /></td>
+						<td class="hideable-column">[[${user.email}]]</td>
+						<td>[[${user.firstName}]]</td>
+						<td>[[${user.lastName}]]</td>
+						<td style="max-width:200px;">[[${user.roles}]]</td>
+						<td><a th:if="${user.enabled == false}" href=""><i
+								class="fas fa-check-circle  icon-gray"></i></a> <a
+							th:if="${user.enabled == true}" href=""><i
+								class="fas fa-check-circle  icon-green"></i></a></td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="less-details">
+			<div class="row m-1" th:each="user : ${listUser}">
+				<div class="col-4">
+					<i th:if="${user.photo == null}"
+						class="fas fa-portrait fa-3x icon-gray"></i> <img
+						th:if="${user.photo != null}" th:src="@{${user.photoPath}}"
+						style="max-width: 100px;" />
+				</div>
+				<div class="col-7 pl-4">
+					<div class="row">
+						[[${user.firstName}]] [[${user.lastName}]]
+						<span class="ml-3">
+							<a th:if="${user.enabled == false}" href=""><i
+							class="fas fa-check-circle  icon-gray"></i></a> <a
+							th:if="${user.enabled == true}" href=""><i
+							class="fas fa-check-circle  icon-green"></i></a>
+						</span>
+					</div>
+					<div class="row">[[${user.roles}]]</div>
+					<div class="row mt-2">
+						<a th:href="@{'/users/edit/'+${user.id}}"><i
+							class="fas fa-edit  icon-green"></i></a> | <a
+							th:href="@{'/users/delete/'+${user.id}}" class="link-delete"
+							th:userId="${user.id}"><i class="fas fa-trash  icon-red "></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing users [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total users</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No user found</h2>
+		</div>
+<!--  
+		<nav th:if="${totalElements > 0}">
+			<ul class="pagination justify-content-center flex-wrap">
+				<li class="page-item"><a class="page-link"
+					th:href="@{'/users/page/1?keyword=' + ${keyword==null? '' : keyword}}">First</a></li>	
+				<li
+					th:class="${currentPage == 1 ? 'page-item disabled': 'page-item'}"><a
+					class="page-link" th:href="@{'/users/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword}}">Previous</a></li>
+				<li
+					th:class="${currentPage == pageNum ? 'page-item active': 'page-item'}"
+					th:each="pageNum : ${#numbers.sequence(1, totalPage)}"><a
+					class="page-link" th:href="@{'/users/page/'+${pageNum} + '?keyword=' + ${keyword==null? '' : keyword}}">[[${pageNum}]]</a>
+				</li>
+
+				<li
+					th:class="${currentPage == totalPage ? 'page-item disabled': 'page-item'}"><a
+					class="page-link" th:href="@{'/users/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword}}">Next</a></li>
+				<li class="page-item"><a class="page-link"
+					th:href="@{'/users/page/' + ${totalPage} + '?keyword=' + ${keyword==null? '' : keyword}}">Last</a></li>
+
+			</ul>
+		</nav>
+-->
+
+		<nav th:if="${totalElements > 0}" th:replace="fragments :: pagination('/users/page/1?keyword=' + ${keyword==null? '' : keyword},
+																				'/users/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/users/page/',
+																				'/users/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+																				'/users/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+																				${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+		</nav>
+
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" id="deleteUser" href="">Delete this
+							user</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript">	
+		
+		$(document).ready(
+			function() {
+				$(".link-delete").on(
+						"click",
+						function(e) {
+							e.preventDefault();
+							link = $(this);
+							userId = link.attr("userId");
+							$("#deleteUser")
+									.attr("href", link.attr("href"));
+							$("#modalBody").text(
+									"Are you sure to delete this user (ID="
+											+ userId + ")");
+							$("#modalDialog").modal();
+						})
+				
+			}
+		);
+		function clearFilter(){
+			window.location = "[[@{/users}]]"
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body >
+	<div th:fragment="content" th:remove="tag" class="d-flex justify-content-center">
+		<div class="container">
+			<label>Description:</label>
+			<textarea th:field="*{description}" required></textarea>
+		</div>
+	</div>
+</body>
+</html>

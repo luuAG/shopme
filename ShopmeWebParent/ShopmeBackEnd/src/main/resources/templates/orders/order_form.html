@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Edit order (ID: '+ ${order.id} + ')', null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		<div>
+			<h1>Edit order (ID: [[${order.id}]])</h1>
+		</div>
+
+			
+
+		<div>
+			<form th:action="@{/orders/save}" method="post" th:object="${order}" >
+				<input type="hidden" th:field="*{id}"/>
+			
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs"  role="tablist">
+				  <li class="nav-item">
+				    <a class="nav-link active"  data-toggle="tab" href="#overview" role="tab" >Overview</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link"  data-toggle="tab" href="#products" role="tab" >Products</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link"  data-toggle="tab" href="#shipping" role="tab" >Shipping</a>
+				  </li>
+				</ul>
+			
+				<!-- Tab panes -->
+				<div class="tab-content" style="max-width:60%;margin:auto;">
+					<!-- Overview -->
+					<div class="tab-pane active p-3" id="overview" role="tabpanel" >
+					 	<div class="container-fluid">
+					 		<div class="row m-2">
+					 			<div class="col-3">Order ID: </div>
+					 			<div class="col-9">
+					 				<input class="form-control" th:field="${order.id}" readonly/>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2">
+					 			<div class="col-3">Customer: </div>
+					 			<div class="col-9">
+					 				<input class="form-control" th:field="${order.customer.fullName}" readonly/>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2">
+					 			<div class="col-3">Subtotal price ($): </div>
+					 			<div class="col-9">
+					 				<input type="number" step="any" class="form-control" th:field="*{subTotalPrice}" readonly/>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+					 			<div class="col-3">Shipping cost ($): </div>
+					 			<div class="col-9">
+					 				<input type="number" step="any" class="form-control" th:field="*{shippingCost}" required/>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2" sec:authorize="hasAuthority('Shipper')">
+					 			<div class="col-3">Shipping cost ($): </div>
+					 			<div class="col-9">
+					 				<input type="number" step="any" class="form-control" th:field="*{shippingCost}" readonly required/>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+					 			<div class="col-3">Total price ($): </div>
+					 			<div class="col-9">
+					 				<input type="number" step="any" class="form-control" th:field="*{totalPrice}" required readonly/>
+					 				<p>Total price = subtotal price + shipping cost</p>
+					 			</div>	
+					 		</div>
+					 		<div class="row m-2" sec:authorize="hasAnyAuthority('Shipper')">
+					 			<div class="col-3">Total price ($): </div>
+					 			<div class="col-9">
+					 				<input type="number" class="form-control" th:field="*{totalPrice}" required readonly/>
+					 				<p>Total price = subtotal price + shipping cost</p>
+					 			</div>
+					 			
+					 		</div>
+					 		<div class="row m-2">
+					 			<div class="col-3">Status: </div>
+					 			<div class="col-9">
+					 				<select class="form-control" th:field="${order.status}" required>
+					 					<th:block th:each="status : ${T(com.shopme.common.entity.OrderStatus).values()}"> 
+					 						<option th:value="${status}">[[${status}]]</option>
+					 					</th:block>
+					 				</select>
+					 			</div>
+					 		</div>
+					 	</div>
+					</div>
+					
+					<!-- Products -->
+					<div class="tab-pane" id="products" role="tabpanel" >
+					 	<div class="container">
+					 		<th:block th:each="detail, status : *{orderDetails}">
+					 			<div th:id="'divProduct'+${status.index}" >
+					 				<input type="hidden" th:value="${detail.id}" name="detailId"/>
+						 			<input type="hidden" th:value="${detail.product.id}" name="productId"/>
+						 			
+						 			
+									<div class="border m-3">
+										<div class="row m-3 ">
+											<div class="col-3 text-center">
+												<img th:src="@{${detail.product.mainImagePath}}" 
+													style="max-width:100px;"/>
+											</div>
+											<div class="col-9">
+												<p>
+													<b>Product:</b> [[${detail.product.name}]]
+												</p> 
+												<div class="row">
+													<label class="col-3 form-label">Price ($): </label>
+													<input type="number" class="form-control" style="max-width:50%;" readonly required
+														th:value="${detail.product.price}" 
+														th:id="'price' + ${status.index}" />
+												</div>
+												<div class="row" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+													<label class="col-3 form-label">Quantity: </label>
+													<input type="number" min="1" onkeydown="return false;" style="max-width:50%;"
+														class="col-10 form-control" name="quantity"
+														th:value="${detail.quantity}"
+														th:id="'quantity' + ${status.index}"/>
+												</div>
+												<div class="row" sec:authorize="hasAnyAuthority('Shipper')">
+													<label class="col-3 form-label">Quantity: </label>
+													<input type="number" style="max-width:50%;" class="col-10 form-control" 
+														name="quantity" th:value="${detail.quantity}" readonly/>
+												</div>
+												<div class="row">
+													<label class="col-3 form-label">Subtotal ($): </label>
+													<input type="number" class="form-control" style="max-width:50%;" required readonly 
+														name="subTotalPricePerProduct" 
+														th:value="${detail.subTotalPrice}"
+														th:id="'subTotalPrice' + ${status.index}"/>
+													<a href="" class="fas fa-trash fa-2x icon-red ml-5 pl-5 link-delete" 
+														th:idOfDiv="'divProduct'+${status.index}" 
+														sec:authorize="hasAnyAuthority('Admin', 'Salesperson')"></a>
+												</div>
+											</div>
+										</div>
+									</div>
+					 			</div>
+					 			
+							</th:block>
+							
+							<div class="text-center" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+								<h3>Total ($): <span id="totalProduct"></span></h3>
+							</div>
+							<div class="text-center" sec:authorize="hasAnyAuthority('Shipper')">
+								<h3>Total ($): [[*{subTotalPrice}]]</h3>
+							</div>
+					 	</div> 
+					</div>
+					
+					<!-- Shipping -->
+					<div class="tab-pane" id="shipping" role="tabpanel" >
+						<div class="container-fluid" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+							<div class="row m-2">
+					 			<div class="col-3">Deliver time: </div>
+					 			<div class="col-9">
+					 				<input type="date" class="form-control" th:field="${order.deliverTime}" required/>
+					 				<p class="text-danger">yyyy-MM-dd or MM/dd/yyyy</p>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2">
+					 			<div class="col-3">Address: </div>
+					 			<div class="col-9">
+					 				<input class="form-control" th:field="${order.address}" required/>
+					 			</div>
+					 		</div>
+						</div> 
+						<div class="container-fluid" sec:authorize="hasAnyAuthority('Shipper')">
+							<div class="row m-2">
+					 			<div class="col-3">Deliver time: </div>
+					 			<div class="col-9">
+					 				<input type="date" class="form-control" th:field="${order.deliverTime}" required readonly/>
+					 				<p class="text-danger">yyyy-MM-dd or MM/dd/yyyy</p>
+					 			</div>
+					 		</div>
+					 		<div class="row m-2">
+					 			<div class="col-3">Address: </div>
+					 			<div class="col-9">
+					 				<input class="form-control" th:field="${order.address}" required readonly/>
+					 			</div>
+					 		</div>
+						</div> 
+					</div>
+				
+				</div>
+				
+				
+				<div class="text-center" >
+					<input type="submit" value="Save" class="btn btn-primary m-3">
+					<input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel">
+				</div>
+			</form>
+		</div>
+		
+		
+		<!--  -->
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody">Remove the product out of the order?</span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" id="deleteButton" href="" idOfDiv="">Remove</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">	
+		moduleURL = "[[@{/orders}]]";
+		
+		$(document).ready(function(){
+			$("#totalProduct").text($("#totalPrice").val());
+		
+			handleInputQuantity();
+			handleInputShippingCost();
+			handleLinkDelete()
+		});
+		
+		function handleInputQuantity(){		
+			updateTotalPrices();
+			
+			$("input[id^='quantity']").each(function(index){
+				$(this).on("input", function(){
+					subTotalPriceObject = $("#subTotalPrice"+index);
+					productPriceObject = $("#price"+index);	
+					subTotalPriceObject.val(    productPriceObject.val()   *   $(this).val()    );		
+					updateTotalPrices();
+				})	
+			})		
+	
+		}
+		function updateTotalPrices(){
+			subTotalPrice = 0;
+			countProducts = $("input[id^='quantity']").length;
+			for (i = 0; i < countProducts; i++){
+				subTotalPrice += parseFloat( $("#subTotalPrice"+i).val() );
+			}
+
+			//Products tab
+			$("#totalProduct").text(subTotalPrice);
+			// Overview tab
+			$("#subTotalPrice").val(subTotalPrice);
+			$("#totalPrice").val(   parseFloat($("#shippingCost").val())   +   parseFloat($("#subTotalPrice").val())    );
+		}
+		
+		function handleInputShippingCost(){
+			$("#shippingCost").on("input", function(){
+				$("#totalPrice").val(   parseFloat($(this).val())   +   parseFloat($("#subTotalPrice").val())    );
+			})
+		}
+		
+		function handleLinkDelete(){
+			$(".link-delete").on("click", function(e) {
+				e.preventDefault();
+				$("#deleteButton").attr("idOfDiv", $(this).attr("idOfDiv"));
+				divToRemove = $("#deleteButton").attr("idOfDiv");
+				$("#deleteButton").click(function(e){
+					e.preventDefault();
+					$("#"+divToRemove).remove();
+					$("#modalDialog").modal('hide');
+					updateTotalPrices();
+				})
+				$("#modalDialog").modal();
+			});
+		}
+	</script>
+	<script type="text/javascript" th:src="@{/js/common_form.js}">
+	</script>
+</body>
+</html>

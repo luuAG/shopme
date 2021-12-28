@@ -1,0 +1,63 @@
+<div class="modal-header">
+	<h4 class="modal-title">Customer details</h4>
+	<button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>
+
+<div>
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs"  role="tablist">
+	  <li class="nav-item">
+	    <a class="nav-link active"  data-toggle="tab" href="#overview" role="tab" >Overview</a>
+	  </li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+	
+		<div class="tab-pane active p-3" id="overview" role="tabpanel" >
+		 	<div class="container-fluid">
+		 		<div class="row m-2">
+		 			<div class="col-2">Customer ID: </div>
+		 			<div class="col-10">
+		 				<input class="form-control" th:value="${customer.id}" readonly/>
+		 			</div>
+		 		</div>
+		 		<div class="row m-2">
+		 			<div class="col-2">Full name: </div>
+		 			<div class="col-10">
+		 				<input class="form-control" th:value="${customer.fullName}" readonly/>
+		 			</div>
+		 		</div>
+		 		<div class="row m-2">
+		 			<div class="col-2">Email: </div>
+		 			<div class="col-10">
+		 				<input class="form-control" th:value="${customer.email}" readonly/>
+		 			</div>
+		 		</div>
+		 		<div class="row m-2">
+		 			<div class="col-2">Address: </div>
+		 			<div class="col-10">
+		 				<input class="form-control" th:value="${customer.address}" readonly/>
+		 			</div>
+		 		</div>
+		 		<div class="row m-2">
+		 			<div class="col-2">Phone number: </div>
+		 			<div class="col-10">
+		 				<input class="form-control" th:value="${customer.phoneNumber}" readonly/>
+		 			</div>
+		 			
+		 		</div>
+		 		<div class="row m-2">
+		 			<div class="col-2">Photo: </div>
+		 			<div class="col-10">
+		 				<img th:src="@{${customer.photoPath}}" style="max-width:200px;"/>
+		 			</div>
+		 		</div>
+		 	</div>
+		</div>
+		
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+</div>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${title}, null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		
+		<h2>Search result for '[[${keyword}]]'</h2>
+		<div class="row">
+			<th:block th:each="product : ${listProducts}">
+				<div class="col-6 mb-5 mt-5" >
+					<div class="col text-center">
+						<a th:href="@{'/p/'+${product.alias}}">
+							<img th:src="@{${product.mainImagePath}}" style="max-width:30%; height:200px;" />
+						</a>
+						<div style="max-width:60%;margin:auto;text-align:center;">
+							<a th:href="@{'/p/'+${product.alias}}">[[${product.name}]]</a>
+						</div>
+						<div style="color:darkred;text-align:center;">$[[${product.price}]]</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+		
+
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing items [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total items</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No item found</h2>
+		</div>
+		<nav th:if="${totalElements > 0}" 
+			th:replace="fragments :: pagination('/search/page/1?keyword=' + ${keyword==null? '' : keyword},
+												'/search/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+												'/search/page/',
+												'/search/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+												'/search/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+												${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+		</nav>
+		
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	
+</body>
+</html>

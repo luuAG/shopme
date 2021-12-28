@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Manage orders', null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		<div>
+			<h1>Manage orders</h1>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+		<div th:replace="fragments :: filter('/orders/page/1')"></div>
+		
+		<div class="full-details">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr class="">
+						<th>Action</th>
+						<th>ID</th>
+						<th>Customer</th>
+						<th>Total</th>
+						<th>Ordered Time</th>
+						<th>Address</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody class="">
+					<tr th:each="order : ${listOrders}">
+						<td >
+							<a th:href="@{'/orders/edit/'+${order.id}}">
+								<i class="fas fa-edit  icon-green"></i>
+							</a> | 
+							<a sec:authorize="hasAnyAuthority('Admin', 'Salesperson')" th:orderId="${order.id}"
+								th:href="@{'/orders/delete/'+${order.id}}" class="link-delete">
+								<i class="fas fa-trash  icon-red "></i>
+							</a> |
+							<a class="link-detail ml-2" th:href="@{'/orders/details/' + ${order.id}}">
+								<i class="fas fa-file-alt"></i>
+							</a>
+						</td>
+						<td>[[${order.id}]]</td>
+						<td>[[${order.customer.fullName}]]</td>
+						<td>$[[${order.totalPrice}]]</td>
+						<td>[[${order.orderedTime}]]</td>
+						<td>[[${order.address}]]</td>
+						<td>[[${order.status}]]</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing orders [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total orders</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No order found</h2>
+		</div>
+
+		<nav th:if="${totalElements > 0}" th:replace="fragments :: pagination(
+			'/orders/page/1?keyword=' + ${keyword==null? '' : keyword},
+			'/orders/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+			'/orders/page/',
+			'/orders/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+			'/orders/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+			${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+		</nav>
+
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" id="deleteOrder" href="">Delete this
+							order</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="modalOrderDetails">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">			
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript">	
+		
+		$(document).ready(
+			function() {
+				$(".link-delete").on("click", function(e) {
+							e.preventDefault();
+							link = $(this);
+							orderId = link.attr("orderId");
+							$("#deleteOrder")
+									.attr("href", link.attr("href"));
+							$("#modalBody").text(
+									"Are you sure to delete this order (ID="
+											+ orderId + ")");
+							$("#modalDialog").modal();
+				});
+				handleLinkOrderDetail();
+			}
+		);
+		
+		function handleLinkOrderDetail(){
+			$(".link-detail").on("click", function(e){
+				e.preventDefault();
+				url = $(this).attr('href');
+				$("#modalOrderDetails").modal("show").find(".modal-content").load(url);
+			})
+		}
+		function clearFilter(){
+			window.location = "[[@{/orders}]]";
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${title}, null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		<div>
+			<nav>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a th:href="@{/}">Home</a>
+					</li>
+					<th:block th:if="${parentCategories != null}">
+						<th:block th:each="cate : ${parentCategories}">
+							<li class="breadcrumb-item">
+								<a th:href="@{'/c/'+${cate.alias}}">[[${cate.name}]]</a>	
+							</li>
+						</th:block>		
+						
+					</th:block>
+					<li class="breadcrumb-item">
+						<a th:href="@{'/c/'+${category.alias}}">[[${category.name}]]</a>
+					</li>	
+					<li>&nbsp;/&nbsp;[[${product.name}]]</li>
+				</ol>
+			</nav>
+		</div>
+		
+		
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-4">
+					<div class="text-center" style="height:500px;">
+						<img id="bigImage" th:src="@{${product.mainImagePath}}" style="max-width:80%;max-height:500px;"/>
+					</div>
+					<div class="row justify-content-center mt-2" style="max-width:100%;">
+						<div class="col text-center d-flex flex-wrap align-items-center" th:each="image : ${product.images}">
+							<img class="smallImage border border-secondary" th:src="@{${image.extraImagePath}}" style="max-width:50%;"/>
+						</div>
+					</div>
+				</div>
+				<div class="col-5">
+					<h2>[[${product.name}]]</h2>
+					<p class="text-primary">Brand: <span class="text-dark">[[${product.brand.name}]]</span></p>
+					<p class="text-primary">Category: <span class="text-dark">[[${product.category.name}]]</span></p>
+					<p class="text-primary">Price: <span style="color:darkred;">$[[${product.price}]]</span></p>
+					<div>
+						<p class="text-primary">Description:</p>
+						[(${product.description})]
+					</div>
+					<div>
+						<p class="text-primary">Specification:</p>
+						<ul>
+							<li th:each="detail : ${product.details}">
+								<span class="text-info">[[${detail.name}]]</span>:&nbsp;<span>[[${detail.value}]]</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-3">
+					<div th:if="${product.inStock==true && product.amount > 0}" class="text-center">
+						<h3 class="text-success">In stock: <span id="productAmount" style="color:darkred;">[[${product.amount}]]</span> products</h3>
+						<span class="text-primary mr-2">Buying amount:</span>
+						<div class="d-flex justify-content-center mt-2">
+							<div th:replace="fragments :: quantity_control(1, ${product.id})"></div>
+						</div>
+						<input type="button" id="addButton" class="d-block btn btn-primary mt-3" value="Add to cart" style="margin:auto;"></input>
+					</div>
+					<div th:if="${product.inStock!=true || product.amount == 0}" class="text-center">
+						<h3 class="text-danger">Out of stock</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div th:replace="modal :: modal_dialog"></div>
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	<script type="text/javascript">
+		contextPath = "[[@{/}]]";
+		productId = "[[${product.id}]]";
+		var csrfHeaderName = "[[${_csrf.headerName}]]";
+		var csrfValue = "[[${_csrf.token}]]";
+	
+		$(document).ready(function(){
+			$(".smallImage").mouseover(function(e){
+				$(this).addClass("shadow mb-1 bg-white rounded");
+				$("#bigImage").attr("src", $(this).attr("src"));
+			});
+			$(".smallImage").mouseleave(function(e){
+				$(this).removeClass("shadow mb-1 bg-white rounded");
+				$("#bigImage").attr("src", "[[@{${product.mainImagePath}}]]");
+			});
+			
+		});
+	</script>
+	<script type="text/javascript" th:src="@{/js/add_to_cart.js}"></script>
+	<script type="text/javascript" th:src="@{/js/quantity_control.js}"></script>
+</body>
+</html>

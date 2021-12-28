@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${title}, null)">
+
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		<div>
+			<nav>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a th:href="@{/}">Home</a>
+					</li>
+					<th:block th:if="${parentCategories != null}">
+						<th:block th:each="cate : ${parentCategories}">
+							<li class="breadcrumb-item">
+								<a th:href="@{'/c/'+${cate.alias}}">[[${cate.name}]]</a>	
+							</li>
+						</th:block>		
+						
+					</th:block>
+					<li class="breadcrumb-item">
+						<a th:href="@{'/c/'+${category.alias}}">[[${category.name}]]</a>
+					</li>	
+				</ol>
+			</nav>
+		</div>
+		
+		<div class="container-fluid">
+			<div class="row text-center  bg-light" th:if="${category.children.size() > 0}">
+				<div class="col-1">Sub categories:</div>
+				<div class="col-11">
+					<div class="row">
+						<th:block th:each="cate : ${category.children}" th:if="${cate.enabled==true}">
+							<div class="col-2">
+								<a th:href="@{'/c/'+${cate.alias}}">
+									<img th:src="@{${cate.imagePath}}" height="80"/>
+									<span class="d-block">[[${cate.name}]]</span>
+								</a>
+							</div>
+						</th:block>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<th:block th:each="product : ${listProducts}">
+				<div class="col-6 mb-5 mt-5" >
+					<div class="col text-center">
+						<a th:href="@{'/p/'+${product.alias}}">
+							<img th:src="@{${product.mainImagePath}}" style="max-width:30%; height:200px;" />
+						</a>
+						<div style="max-width:60%;margin:auto;text-align:center;">
+							<a th:href="@{'/p/'+${product.alias}}">[[${product.name}]]</a>
+						</div>
+						<div style="color:darkred;text-align:center;">$[[${product.price}]]</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+		
+		
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing items [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total items</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No item found</h2>
+		</div>
+		<nav th:if="${totalElements > 0}" 
+			th:replace="fragments :: pagination('/c/'+${category.alias}+'/page/1?keyword=' + ${keyword==null? '' : keyword},
+												'/c/'+${category.alias}+'/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+												'/c/'+${category.alias}+'/page/',
+												'/c/'+${category.alias}+'/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+												'/c/'+${category.alias}+'/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+												${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+			
+		</nav>
+		
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head >
+	<head th:replace="fragments :: page_head(${pageTitle}, 'tag')"></head>
+	<link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
+	<script type="text/javascript" th:src="@{/richtext/jquery.richtext.min.js}"></script>
+	
+</head>
+<body>
+	<div class="container-fluid">
+
+		<div th:replace="navigation :: menu"></div>
+
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+
+		<div>
+			<h1>Manage settings</h1>
+		</div>
+		
+
+
+		<div>
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs"  role="tablist">
+			  <li class="nav-item">
+			    <a class="nav-link active"  data-toggle="tab" href="#general" role="tab" >General</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link"  data-toggle="tab" href="#mailServer" role="tab" >Mail server</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link"  data-toggle="tab" href="#mailTemplate" role="tab" >Mail template</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link"  data-toggle="tab" href="#shipping" role="tab" >Shipping</a>
+			  </li>
+			</ul>
+	
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane active p-3" id="general" role="tabpanel" >
+				 	<div th:replace="settings/setting_general :: content"></div>
+				</div>
+				<div class="tab-pane" id="mailServer" role="tabpanel" >
+				 	<div th:replace="settings/setting_mail-server :: content"></div>
+				</div>
+				<div class="tab-pane" id="mailTemplate" role="tabpanel" >
+					<div th:replace="settings/setting_mail-templates/setting_mail-templates :: content"></div>
+				</div>
+				<div class="tab-pane" id="shipping" role="tabpanel" >
+					<div th:replace="settings/setting_shipping :: content"></div>
+				</div>
+			</div>
+		</div>
+
+
+	
+
+	
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		moduleURL = "[[@{/}]]";
+	
+		$(document).ready(function(){
+			$("#fileImage").change(function(){
+				showImageThumbnail(this);
+			});
+			//
+			$(".button-cancel").click(function(){
+				window.location="[[@{/}]]";
+			})
+			//
+			$("#customerVerifyContent").richText();
+			//
+			$("#orderConfirmContent").richText();
+			//
+			$("#addLocation").click(function(){
+				index = $("input[name='location']").length;
+				addLocation(index);
+			});
+			//
+			
+		});
+		
+		
+		
+
+	</script>
+	
+	<script type="text/javascript" th:src="@{/js/settings_shipping.js}"></script>
+</body>
+</html>

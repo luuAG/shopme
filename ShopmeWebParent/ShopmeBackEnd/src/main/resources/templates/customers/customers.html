@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head(${pageTitle}, null)">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<div th:replace="navigation :: menu"></div>
+		
+		<div>
+			<h1>Manage customers</h1>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+			
+		<div th:replace="fragments :: filter('/customers/page/1')"></div>
+		
+		<div class="full-details">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr class="">
+						<th>Action</th>
+						<th>ID</th>
+						<th>Photo</th>
+						<th>Email</th>
+						<th>First name</th>
+						<th>Last name</th>
+						<th>Enabled</th>
+					</tr>
+				</thead>
+				<tbody class="">
+					<tr th:each="customer : ${listCustomers}">
+						<td >
+							<a th:href="@{'/customers/edit/'+${customer.id}}">
+								<i class="fas fa-edit  icon-green"></i>
+							</a> | 
+							<a th:href="@{'/customers/delete/'+${customer.id}}" class="link-delete"
+								th:customerId="${customer.id}"><i class="fas fa-trash  icon-red "></i>
+							</a> |
+							<a class="link-detail ml-3" th:href="@{'/customers/details/' + ${customer.id}}">
+								<i class="fas fa-file-alt"></i>
+							</a>
+						</td>
+						<td>[[${customer.id}]]</td>
+						<td>
+							<i th:if="${customer.photo == null}" class="fas fa-portrait fa-3x icon-gray"></i> 
+							<img th:if="${customer.photo != null}" th:src="@{${customer.photoPath}}"
+								style="max-width: 100px;" />
+						</td>
+						<td>[[${customer.email}]]</td>
+						<td>[[${customer.firstName}]]</td>
+						<td>[[${customer.lastName}]]</td>
+						<td>
+							<i th:if="${customer.enabled == false}" class="fas fa-check-circle  icon-gray"></i> 
+							<i th:if="${customer.enabled == true}" class="fas fa-check-circle  icon-green"></i>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+
+		<div class="text-center" th:if="${totalElements > 0}">
+			<span>Showing customers [[${startCount}]] to [[${endCount}]] in
+				[[${totalElements}]] total customers</span>
+		</div>
+		<div class="text-center" th:unless="${totalElements > 0}">
+			<h2>No customer found</h2>
+		</div>
+
+		<nav th:if="${totalElements > 0}" th:replace="fragments :: pagination(
+			'/customers/page/1?keyword=' + ${keyword==null? '' : keyword},
+			'/customers/page/' + ${currentPage - 1} + '?keyword=' + ${keyword==null? '' : keyword},
+			'/customers/page/',
+			'/customers/page/' + ${currentPage + 1} + '?keyword=' + ${keyword==null? '' : keyword},
+			'/customers/page/' + ${totalPages} + '?keyword=' + ${keyword==null? '' : keyword},
+			${currentPage},${totalPages}, ${totalElements}, ${keyword})">
+		</nav>
+
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">WARNING</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" id="deletecustomer" href="">Delete this
+							customer</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="modal fade" id="modalCustomerDetails">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">			
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		<div th:replace="fragments :: footer">
+		</div>
+	</div>
+
+	<script type="text/javascript">	
+		
+		$(document).ready(function() {
+				$(".link-delete").on("click", function(e) {
+					e.preventDefault();
+					link = $(this);
+					customerId = link.attr("customerId");
+					$("#deletecustomer")
+							.attr("href", link.attr("href"));
+					$("#modalBody").text(
+							"Are you sure to delete this customer (ID="
+									+ customerId + ")");
+					$("#modalDialog").modal();
+				});
+				
+				handleLinkCustomerDetail();
+				
+			});
+		
+		function handleLinkCustomerDetail(){
+			$(".link-detail").on("click", function(e){
+				e.preventDefault();
+				url = $(this).attr('href');
+				$("#modalCustomerDetails").modal("show").find(".modal-content").load(url);
+			})
+		}
+		
+		function clearFilter(){
+			window.location = "[[@{/customers}]]";
+		}
+	</script>
+</body>
+</html>
