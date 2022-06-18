@@ -8,6 +8,8 @@ public class Constants {
 		String region = System.getenv("AWS_REGION");
 		String pattern = "https://%s.s3.%s.amazonaws.com";
 		
+		System.out.println(bucketName);
+		
 		String uri = String.format(pattern, bucketName, region);
 		
 		S3_BASE_URI = bucketName == null ? "" : uri;

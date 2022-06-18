@@ -46,17 +46,18 @@
 			</div>
 		</div>
 		
-		<div class="row">
+		<div class="row d-flex justify-content-around">
 			<th:block th:each="product : ${listProducts}">
-				<div class="col-6 mb-5 mt-5" >
-					<div class="col text-center">
-						<a th:href="@{'/p/'+${product.alias}}">
-							<img th:src="@{${product.mainImagePath}}" style="max-width:30%; height:200px;" />
+				<div class="col-2 mb-5 mt-5" style:"display:relative;">
+					<div class="col text-center border" style="height:300px;">
+						<a th:href="@{'/p/'+${product.alias}}" style="width:100%; height:50%; display:inline-block;">
+							<img th:src="@{${product.mainImagePath}}" style="width:100%; height:100%; object-fit:fill;" />
 						</a>
-						<div style="max-width:60%;margin:auto;text-align:center;">
+						<div style="margin:auto;text-align:left; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
 							<a th:href="@{'/p/'+${product.alias}}">[[${product.name}]]</a>
 						</div>
-						<div style="color:darkred;text-align:center;">$[[${product.price}]]</div>
+						<div style="color:rgb(128, 128, 128); position:absolute; bottom:5%; font-size:16px;">[[${product.brand.name}]]</div>
+						<div style="color:darkred; position:absolute; bottom:5%; right: 8%;">$[[${product.price}]]</div>
 					</div>
 				</div>
 			</th:block>
